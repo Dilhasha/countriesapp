@@ -1,4 +1,5 @@
 import ballerina/http;
+import ballerina/log;
 
 final http:Client countriesClient = check new ("https://dev-tools.wso2.com/gs/helpers/v1.0/");
 
@@ -8,6 +9,8 @@ service / on new http:Listener(8080) {
         do {
 
             // Sending a GET request to the "/countries" endpoint and retrieving an array of `Country` records.
+
+            log:printInfo("fetching top countries");
             Country[] countries = check countriesClient->/countries;
 
             // Using a query expression to process the list of countries and generate a summary.
@@ -18,6 +21,7 @@ service / on new http:Listener(8080) {
             order by gdpPerCapita descending // Sorting the results by GDP per capita in descending order.
             limit 10 // Limiting the results to the top 10 countries.
             select {name, continent, gdpPerCapita};
+            log:printDebug(`fetched the countries list ${countries}`);
             // Selecting the country name, continent, and GDP per capita.
             return topCountries;
         } on fail var err {
